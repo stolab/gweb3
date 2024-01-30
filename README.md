@@ -31,3 +31,5 @@ contract, err := InitializeContract(endpoint, $CONTRACT_ADDR, $FROM_ADDR, $ABI)
 //calling a contract function named HelloWorld which take 1 argument
 contract.Function["HelloWorld"].Call("MySuperName")
 ```
+
+>  If you have to create and actual transaction (ie: not calling a view/pure function), you have to have your own node running in which you have unlock the sender adress. (In geth this is achieve with the `--unlock` paramters)
