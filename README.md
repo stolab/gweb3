@@ -17,9 +17,18 @@ If that's the first time you use this library, you will also need to get this pa
 ## Usage
 You have support for quite a lot of RPC call defined in the [Ethereum JSON-RPC specification](https://ethereum.github.io/execution-apis/api-documentation/).
 You first need to create your endpoint (ie: your node that act as your entry point to the blockchain)
+You will have to provide the address of the RPC in the following schema:
+```bash
+SCHEME://HOST:[PORT]
+```
+where:
+* `SCHEME`: is one of HTTP or HTTPS
+* `HOST`: is a hostname or an IP
+* `PORT`: is optional and is the port number
+
 and then you can call whatever JSON-RPC that is implemented:
 ```go
-endpoint := ConnectEndpoint($ENDPOINT_URL/IP, $ENDPOINT_PORT)
+endpoint := ConnectEndpoint("http://MysuperEndpoint.com:1717")
 response, err := endpoint.ClientVersion() //Will return the clientVersion of the endpoint
 ```
 ### Smart Contract Interaction

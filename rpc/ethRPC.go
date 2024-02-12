@@ -3,6 +3,7 @@ package rpc
 import (
     "fmt"
     "net/http"
+    "net/url"
 )
 
 // Represent the parameters to allow multiple type
@@ -11,8 +12,7 @@ type Parameters interface{}
 //represent the endpoint used as the entry point to the network.
 //This can be a public endpoint as well as a personal node
 type Endpoint struct {
-    url      string
-    port     string
+    ParsedURL *url.URL
     endpoint string
 }
 
@@ -38,12 +38,16 @@ type RPCTransaction struct {
 
 // NOTE does it really make sense to keep this Endpoint in this form?
 //Initialize the endpoint.
-func ConnectEndpoint(url string, port string) *Endpoint {
-    return &Endpoint{
-        url:      url,
-        port:     port,
-        endpoint: "http://" + url + ":" + port,
+func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
+    u, err := url.Parse(Rawurl)
+    if err != nil {
+        return nil, err
     }
+
+    return &Endpoint{
+        ParsedURL: u, 
+        endpoint: u.String(),
+    }, nil
 }
 
 func (ep *Endpoint) ClientVersion() (*http.Response, error) {
