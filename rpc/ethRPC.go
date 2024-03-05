@@ -54,6 +54,10 @@ func (ep *Endpoint) ClientVersion() (*http.Response, error) {
     return ep.HttpRequest([]Parameters{}, RPCendpoint["ClientVersion"])
 }
 
+func (ep *Endpoint) NetworkId() (*http.Response, error) {
+    return ep.HttpRequest([]Parameters{}, RPCendpoint["NeworkId"])
+}
+
 func (ep *Endpoint) MostRecentBlock() (*http.Response, error) {
     return ep.HttpRequest([]Parameters{}, RPCendpoint["MostRecentBlock"])
 }
@@ -64,7 +68,6 @@ func (ep *Endpoint) GetTransactionCount(address string) (*http.Response, error) 
     return ep.HttpRequest(params, RPCendpoint["GetTransactionCount"])
 }
 
-// TODO should do a build transaction function
 func (ep *Endpoint) SignTransaction(transaction Transaction) (*http.Response, error) { //must be used after in accordance with sendRawTransaction
     params := []Parameters{transaction}
     return ep.HttpRequest(params, RPCendpoint["SignTransaction"])
