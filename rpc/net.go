@@ -19,6 +19,7 @@ func (ep *Endpoint)HttpRequest(Params []Parameters, rpcDetail RPCMethod) (*http.
 	}
 
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("accept-encoding", "*/*")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil{
 		return nil, err
