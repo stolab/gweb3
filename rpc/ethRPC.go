@@ -55,7 +55,7 @@ func (ep *Endpoint) ClientVersion() (*http.Response, error) {
 }
 
 func (ep *Endpoint) NetworkId() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["NeworkId"])
+    return ep.HttpRequest([]Parameters{}, RPCendpoint["NetworkId"])
 }
 
 func (ep *Endpoint) MostRecentBlock() (*http.Response, error) {
