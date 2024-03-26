@@ -4,7 +4,6 @@ package contracts
 import (
 	"fmt"
 	"io"
-	"net/http"
 
     "github.com/stolab/gweb3/rpc"
 
@@ -31,7 +30,7 @@ type Contract struct {
 //Call can only be used on a ContractFunction struct.
 //It will simply called the ContractFunction cf with the 
 //undefined number of argument the user will give to it.
-func (cf ContractFunction) Call(arguments ...interface{}) (*http.Response, error){
+func (cf ContractFunction) Call(arguments ...interface{}) (*rpc.RPCResponse, error){
     encInput, err := cf.contract.Abi.Pack(cf.Name, arguments...)
     if err != nil {
         return nil,err
@@ -39,7 +38,7 @@ func (cf ContractFunction) Call(arguments ...interface{}) (*http.Response, error
 
     Transaction := rpc.BuildTransaction(cf.contract.From, cf.contract.contractAddr, "0x0", fmt.Sprintf("0x%x", encInput)) 
 
-    var resp *http.Response
+    var resp *rpc.RPCResponse
     //return the encoded value
     if cf.contract.Abi.Methods[cf.Name].StateMutability == "view" || cf.contract.Abi.Methods[cf.Name].StateMutability == "pure"{
         resp, err = cf.contract.ep.Call(Transaction) //No gas required

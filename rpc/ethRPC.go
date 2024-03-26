@@ -1,9 +1,9 @@
 package rpc
 
 import (
-    "fmt"
-    "net/http"
-    "net/url"
+	"fmt"
+	"net/url"
+	"os"
 )
 
 // Represent the parameters to allow multiple type
@@ -14,6 +14,7 @@ type Parameters interface{}
 type Endpoint struct {
     ParsedURL *url.URL
     endpoint string
+    isIPC bool
 }
 
 // Represent the transaction 
@@ -39,43 +40,54 @@ type RPCTransaction struct {
 // NOTE does it really make sense to keep this Endpoint in this form?
 //Initialize the endpoint.
 func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
+
+    _, error := os.Stat(Rawurl)
+    //case this is a IPC file
+    if error == nil {
+        return &Endpoint{
+            endpoint: Rawurl,
+            isIPC: true,
+        }, nil
+    }
+
+    //case this is a URL
     u, err := url.Parse(Rawurl)
     if err != nil {
         return nil, err
     }
-
     return &Endpoint{
         ParsedURL: u, 
         endpoint: u.String(),
+        isIPC: false,
     }, nil
 }
 
-func (ep *Endpoint) ClientVersion() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["ClientVersion"])
+func (ep *Endpoint) ClientVersion() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["ClientVersion"])
 }
 
-func (ep *Endpoint) NetworkId() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["NetworkId"])
+func (ep *Endpoint) NetworkId() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["NetworkId"])
 }
 
-func (ep *Endpoint) MostRecentBlock() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["MostRecentBlock"])
+func (ep *Endpoint) MostRecentBlock() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["MostRecentBlock"])
 }
 
-func (ep *Endpoint) GetTransactionCount(address string) (*http.Response, error) {
+func (ep *Endpoint) GetTransactionCount(address string) (*RPCResponse, error) {
     params := []Parameters{address, "latest"}
 
-    return ep.HttpRequest(params, RPCendpoint["GetTransactionCount"])
+    return ep.Request(params, RPCendpoint["GetTransactionCount"])
 }
 
-func (ep *Endpoint) SignTransaction(transaction Transaction) (*http.Response, error) { //must be used after in accordance with sendRawTransaction
+func (ep *Endpoint) SignTransaction(transaction Transaction) (*RPCResponse, error) { //must be used after in accordance with sendRawTransaction
     params := []Parameters{transaction}
-    return ep.HttpRequest(params, RPCendpoint["SignTransaction"])
+    return ep.Request(params, RPCendpoint["SignTransaction"])
 }
 
-func (ep *Endpoint) SendRawTransaction(rawSignedTransaction string) (*http.Response, error) {
+func (ep *Endpoint) SendRawTransaction(rawSignedTransaction string) (*RPCResponse, error) {
     params := []Parameters{rawSignedTransaction}
-    return ep.HttpRequest(params, RPCendpoint["SendRawTransaction"])
+    return ep.Request(params, RPCendpoint["SendRawTransaction"])
 }
 
 func BuildTransaction(from string, to string, value string, input string) Transaction {
@@ -88,59 +100,59 @@ func BuildTransaction(from string, to string, value string, input string) Transa
     return transaction
 }
 
-func (ep *Endpoint) SendTransaction(transaction Transaction) (*http.Response, error) { //must be used with getTransactionReceipt to get the contract address after creating it.
-        return ep.HttpRequest([]Parameters{transaction}, RPCendpoint["SendTransaction"])
+func (ep *Endpoint) SendTransaction(transaction Transaction) (*RPCResponse, error) { //must be used with getTransactionReceipt to get the contract address after creating it.
+        return ep.Request([]Parameters{transaction}, RPCendpoint["SendTransaction"])
 }
 
-func (ep *Endpoint) GetTransactionByHash(transactionHash string) (*http.Response, error) {
+func (ep *Endpoint) GetTransactionByHash(transactionHash string) (*RPCResponse, error) {
     params := []Parameters{transactionHash}
-    return ep.HttpRequest(params, RPCendpoint["GetTransactionByHash"])
+    return ep.Request(params, RPCendpoint["GetTransactionByHash"])
 }
 
-func (ep *Endpoint) GetBalance(address string) (*http.Response, error) {
+func (ep *Endpoint) GetBalance(address string) (*RPCResponse, error) {
     params := []Parameters{address, "latest"} 
 
-    return ep.HttpRequest(params, RPCendpoint["GetBalance"])
+    return ep.Request(params, RPCendpoint["GetBalance"])
 }
 
-func (ep *Endpoint) GetStorageAt(contractAdress string, storageAddr int) (*http.Response, error) {
+func (ep *Endpoint) GetStorageAt(contractAdress string, storageAddr int) (*RPCResponse, error) {
     storageAddrString := fmt.Sprintf("0x%x", storageAddr)
 
     params := []Parameters{contractAdress, storageAddrString, "latest"}
-    return ep.HttpRequest(params, RPCendpoint["GetStorageAt"])
+    return ep.Request(params, RPCendpoint["GetStorageAt"])
 
 }
 
-func (ep *Endpoint) Sha3(data string) (*http.Response, error) {
+func (ep *Endpoint) Sha3(data string) (*RPCResponse, error) {
     params := []Parameters{data}
-    return ep.HttpRequest(params, RPCendpoint["Sha3"])
+    return ep.Request(params, RPCendpoint["Sha3"])
 }
 
-func (ep *Endpoint) GetCode(address string) (*http.Response, error) {
+func (ep *Endpoint) GetCode(address string) (*RPCResponse, error) {
     params := []Parameters{address, "latest"}
-    return ep.HttpRequest(params, RPCendpoint["GetCode"])
+    return ep.Request(params, RPCendpoint["GetCode"])
 }
 
-func (ep *Endpoint) GetGasPrice() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["GasPrice"])
+func (ep *Endpoint) GetGasPrice() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["GasPrice"])
 }
 
-func (ep *Endpoint) GetCoinbase() (*http.Response, error) {
-    return ep.HttpRequest([]Parameters{}, RPCendpoint["Coinbase"])
+func (ep *Endpoint) GetCoinbase() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["Coinbase"])
 }
 
-func (ep *Endpoint) GetBlockReceipts(blockNumber string) (*http.Response, error) {
+func (ep *Endpoint) GetBlockReceipts(blockNumber string) (*RPCResponse, error) {
     params := []Parameters{blockNumber}
-    return ep.HttpRequest(params, RPCendpoint["GetBlockReceipts"])
+    return ep.Request(params, RPCendpoint["GetBlockReceipts"])
 }
 
-func (ep *Endpoint) GetTransactionReceipt(transactionHash string) (*http.Response, error){
+func (ep *Endpoint) GetTransactionReceipt(transactionHash string) (*RPCResponse, error){
     params := []Parameters{transactionHash}
-    return ep.HttpRequest(params, RPCendpoint["GetTransactionReceipt"])
+    return ep.Request(params, RPCendpoint["GetTransactionReceipt"])
 }
 
-func (ep *Endpoint) Call(tr Transaction) (*http.Response, error) {
+func (ep *Endpoint) Call(tr Transaction) (*RPCResponse, error) {
     params := []Parameters{tr}
-    return ep.HttpRequest(params, RPCendpoint["Call"])
+    return ep.Request(params, RPCendpoint["Call"])
 }
 

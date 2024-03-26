@@ -9,7 +9,7 @@ By importing package present in this module, you can interact with the ethereum 
 ## Installation
 To use this package, simply import it in your project like any other go package.
 ```go
-import github.com/stolab/gweb3
+import github.com/stolab/gweb3/contracts
 ```
 If that's the first time you use this library, you will also need to get this package with the following command
 `go get github.com/stolab/gweb3`

@@ -3,17 +3,81 @@ package rpc
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"io"
+	"net"
 	"net/http"
 )
 
-func (ep *Endpoint)HttpRequest(Params []Parameters, rpcDetail RPCMethod) (*http.Response, error) {
+type RPCError struct {
+    Code int `json:"code"`
+    Message string `json:"message"`
+}
+
+type RPCResponse struct {
+    Jsonrpc string `json:"jsonrpc"`
+    Id int `json:"id"`
+    Result string `json:"result"`
+    Error *RPCError `json:"error"`
+}
+
+//TODO should probably return a struct representing the response
+func (ep *Endpoint) Request(Params []Parameters, rpcDetail RPCMethod) (*RPCResponse, error) {
     RPCRequest := buildRPCRequest(Params, rpcDetail)
     json, err := json.Marshal(RPCRequest)
     if err != nil {
         return nil, err
     }
 
-    req, err := http.NewRequest(rpcDetail.HTTPMethod, ep.endpoint, bytes.NewBuffer(json))
+    if ep.isIPC {
+        return ep.UnixSocketRequest(json)
+    } else {
+        return ep.HttpRequest(rpcDetail.HTTPMethod, json)
+    }
+}
+
+/*
+* Used when trying to dialog with the node via UnixSocket
+* Return an RPCResponse structure with the structure or an error if something went wrong
+* note that if the RPC request went wrong, this function return a RPCResponse with an RPCERROR in it
+*/
+func (ep *Endpoint) UnixSocketRequest(RPCjson []byte) (*RPCResponse, error) {
+    response := new(RPCResponse)
+
+    conn, err := net.Dial("unix", ep.endpoint)
+    if err != nil {
+        return nil, err
+    }
+    defer conn.Close()
+
+    fmt.Println("Sending message")
+    _, err = conn.Write(RPCjson)
+    if err != nil {
+        return nil, err
+    }
+
+    //read response
+    buf := make([] byte, 1024)
+    n, err := conn.Read(buf)
+    if err != nil {
+        return nil, err
+    }
+
+    err = json.Unmarshal(buf[0:n], response)
+    if err != nil {
+        return nil, err
+    }
+
+    return response, nil
+}
+
+/*
+* Used when connecting to the endpoint via http
+* return an RPCResponse if everything goes well and nil and an error otherwise
+*/
+func (ep *Endpoint)HttpRequest(httpMethod string, RPCjson []byte) (*RPCResponse, error) {
+
+    req, err := http.NewRequest(httpMethod, ep.endpoint, bytes.NewBuffer(RPCjson))
     if err != nil {
         return nil, err
     }
@@ -24,7 +88,15 @@ func (ep *Endpoint)HttpRequest(Params []Parameters, rpcDetail RPCMethod) (*http.
         return nil, err
     }
 
-    return resp, nil
+    defer resp.Body.Close()
+    bodybytes, err := io.ReadAll(resp.Body)
+    if err != nil {
+        return nil, err
+    }
+    rpcResponse := new(RPCResponse)
+    json.Unmarshal(bodybytes, rpcResponse)
+
+    return rpcResponse, nil
 }
 
 func buildRPCRequest(params []Parameters, method RPCMethod) (RPCTransaction){
