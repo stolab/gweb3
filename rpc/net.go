@@ -3,7 +3,6 @@ package rpc
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -50,7 +49,6 @@ func (ep *Endpoint) UnixSocketRequest(RPCjson []byte) (*RPCResponse, error) {
     }
     defer conn.Close()
 
-    fmt.Println("Sending message")
     _, err = conn.Write(RPCjson)
     if err != nil {
         return nil, err
