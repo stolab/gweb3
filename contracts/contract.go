@@ -33,7 +33,7 @@ type Contract struct {
 func (cf ContractFunction) Call(arguments ...interface{}) (*rpc.RPCResponse, error){
     encInput, err := cf.contract.Abi.Pack(cf.Name, arguments...)
     if err != nil {
-        return nil,err
+        return nil, fmt.Errorf("Got an error during the ABI encoding: %s", err)
     }
 
     Transaction := rpc.BuildTransaction(cf.contract.From, cf.contract.contractAddr, "0x0", fmt.Sprintf("0x%x", encInput)) 
@@ -47,7 +47,7 @@ func (cf ContractFunction) Call(arguments ...interface{}) (*rpc.RPCResponse, err
     }
 
     if err != nil {
-        return nil,err
+        return nil, fmt.Errorf("Got an error when making the call : %s", err)
     }
 
     return resp,nil
