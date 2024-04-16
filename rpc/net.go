@@ -1,8 +1,10 @@
 package rpc
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -55,25 +57,24 @@ func (ep *Endpoint) UnixSocketRequest(RPCjson []byte) (*RPCResponse, error) {
     }
 
     //read response
-    buf := make([] byte, 1024)
-    n, err := conn.Read(buf)
+    //use of a scanner in case the response is very large.
+    //The json send as a response is always on one line.
+    //We consider that no more than one line is received for each answer
+    scanner := bufio.NewScanner(conn)
+    scanner.Scan()
+    line := scanner.Text()
+    err = json.Unmarshal([]byte(line), response)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("Error when Unmarshalling the response : %s. Response: %v", err, response)
     }
-
-    err = json.Unmarshal(buf[0:n], response)
-    if err != nil {
-        return nil, err
-    }
-
-    return response, nil
+    return response, nil 
 }
 
 /*
 * Used when connecting to the endpoint via http
 * return an RPCResponse if everything goes well and nil and an error otherwise
 */
-func (ep *Endpoint)HttpRequest(httpMethod string, RPCjson []byte) (*RPCResponse, error) {
+func (ep *Endpoint) HttpRequest(httpMethod string, RPCjson []byte) (*RPCResponse, error) {
 
     req, err := http.NewRequest(httpMethod, ep.endpoint, bytes.NewBuffer(RPCjson))
     if err != nil {
