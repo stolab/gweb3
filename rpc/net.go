@@ -22,7 +22,6 @@ type RPCResponse struct {
     Error *RPCError `json:"error"`
 }
 
-//TODO should probably return a struct representing the response
 func (ep *Endpoint) Request(Params []Parameters, rpcDetail RPCMethod) (*RPCResponse, error) {
     RPCRequest := buildRPCRequest(Params, rpcDetail)
     json, err := json.Marshal(RPCRequest)
