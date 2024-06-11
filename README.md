@@ -21,6 +21,10 @@ You will have to provide the address of the RPC in the following schema:
 ```bash
 SCHEME://HOST:[PORT]
 ```
+
+Now the IPC endpoint is also supported.
+Instead of a URL, you can specify the path to the IPC file.
+
 where:
 * `SCHEME`: is one of HTTP or HTTPS
 * `HOST`: is a hostname or an IP
