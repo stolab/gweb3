@@ -21,11 +21,11 @@ type ContractFunction struct {
 //Contract structure represent a contract with different 
 //useful attribute
 type Contract struct {
-    ep *rpc.Endpoint
-    contractAddr string
-    Abi gethABI.ABI
+    ep *rpc.Endpoint    // the ethereum RPC endpoint used
+    contractAddr string // address of the contract
+    Abi gethABI.ABI     // ABI of the contract
     Function map[string]ContractFunction
-    From string
+    From string         // sender of the transaction
 }
 
 //Call can only be used on a ContractFunction struct.

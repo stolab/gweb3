@@ -1,17 +1,19 @@
 # gweb3
-Golang library to interact with the ethereum network.
+Golang library to interact with an ethereum RPC endpoint.
 
 ***
 
 ## Description
-By importing package present in this module, you can interact with the ethereum blockchain directly from your go application with a level of abstraction. You don't have to reimplement everything to interact with the blockchain.
+By importing package present in this module, you can interact with the ethereum blockchain directly from your go application.
+By using the [rpc](./rpc) package, you can directly interact with RPC method exposed by the endpoint. 
+With the [contracts](./contracts) package you can directly interact with a smart contract given that you provide the ABI of the contract.
 
 ## Installation
-To use this package, simply import it in your project like any other go package.
+To use one package of this module, simply import it in your project like any other go package.
 ```go
 import github.com/stolab/gweb3/contracts
 ```
-If that's the first time you use this library, you will also need to get this package with the following command
+If that's the first time you use this module, you will also need to download this package with the following command
 `go get github.com/stolab/gweb3`
 
 ## Usage
@@ -21,9 +23,8 @@ You will have to provide the address of the RPC in the following schema:
 ```bash
 SCHEME://HOST:[PORT]
 ```
-
-Now the IPC endpoint is also supported.
-Instead of a URL, you can specify the path to the IPC file.
+Note that if you are running a node locally, you can use the IPC file when creating the endpoint.
+To create a new endpoint based on an IPC file, just provide the path to the IPC file when creating the endpoint.
 
 where:
 * `SCHEME`: is one of HTTP or HTTPS
@@ -35,6 +36,28 @@ and then you can call whatever JSON-RPC that is implemented:
 endpoint := ConnectEndpoint("http://MysuperEndpoint.com:1717")
 response, err := endpoint.ClientVersion() //Will return the clientVersion of the endpoint
 ```
+
+All the current RPC call implemented are described in the following table
+| ClientVersion | |
+| Sha3          | |
+| NetworkId     | |
+| MostRecentBlock | |
+| GetBalance    | |
+| GetStorageAt  | |
+| GetTransactionCount | |
+| GetCode       | |
+| GetBlockByHash | |
+| Sign          | |
+| SignTransaction | |
+| SendTransaction | |
+| SendRawTransaction | |
+| GasPrice | |
+| Coinbase | |
+| GetTransactionByHash | |
+| GetBlockReceipts | |
+| GetTransactionReceipt | |
+| Call | |
+
 ### Smart Contract Interaction
 You can also interact with smart contract. As shown in the example below, you will need the ABI of the contract in order to interact with it, as well as an endpoint.
 Once all of this is setup, you can query any of the function defined in the ABI as shown in the example below
