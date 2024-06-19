@@ -60,7 +60,7 @@ func (cf ContractFunction) Call(arguments ...interface{}) ([]interface{}, error)
     if err != nil {
         return nil, err
     }
-    decOutput, err := cf.contract.Abi.Unpack(cf.Name, hexResult) //needed to remove the 0x in front of the result IN WHICH FUCKING FORMAT SHOULD WE GIVE THE ANSWER PTN???
+    decOutput, err := cf.contract.Abi.Unpack(cf.Name, hexResult) //needed to remove the 0x in front of the result 
     if err != nil {
         return nil, fmt.Errorf("Error when unpacking: %s", err)
     }
