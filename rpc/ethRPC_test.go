@@ -3,6 +3,7 @@ package rpc
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"os"
 	"testing"
 )
@@ -38,7 +39,8 @@ func TestMain(m *testing.M){
 
     endpoint, err =  ConnectEndpoint(*chainURL)
     if err != nil {
-        os.Exit(1) //TODO check how os.Exit works and how to pass it an error message
+        fmt.Println("Error when connecting to the endpoint: %w", err)
+        os.Exit(1) 
     }
 
     os.Exit(m.Run())
