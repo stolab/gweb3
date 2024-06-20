@@ -18,12 +18,12 @@ type RPCError struct {
 type RPCResponse struct {
     Jsonrpc string `json:"jsonrpc"`
     Id int `json:"id"`
-    Result string `json:"result"`
+    Result any `json:"result"`
     Error *RPCError `json:"error"`
 }
 
 func (ep *Endpoint) Request(Params []Parameters, rpcDetail RPCMethod) (*RPCResponse, error) {
-    RPCRequest := buildRPCRequest(Params, rpcDetail)
+    RPCRequest := ep.buildRPCRequest(Params, rpcDetail)
     json, err := json.Marshal(RPCRequest)
     if err != nil {
         return nil, err
@@ -97,12 +97,13 @@ func (ep *Endpoint) HttpRequest(httpMethod string, RPCjson []byte) (*RPCResponse
     return rpcResponse, nil
 }
 
-func buildRPCRequest(params []Parameters, method RPCMethod) (RPCTransaction){
+func (ep *Endpoint) buildRPCRequest(params []Parameters, method RPCMethod) (RPCTransaction){
     rpc := RPCTransaction{
         Jsonrpc:"2.0",
-        Id:66, //TODO maybe mettre un random in a given range
+        Id:ep.requestId, 
         Method:method.Method,
         Params:params,
     }
+    ep.requestId++
     return rpc
 }

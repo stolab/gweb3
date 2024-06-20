@@ -24,6 +24,7 @@ var (
 )
 
 //helper to help marshalling a answer into a string
+//NOTE could be move as an helper in RPC package ?
 func marshalling(answer *RPCResponse) (string, error){
     marshalled, err := json.Marshal(answer)
     if err != nil {
@@ -206,10 +207,8 @@ func TestDeployContract(t *testing.T){
     if err != nil {
         t.Fatalf("error when deploying contract: %q", err)
     }
-    t.Logf("resp: %v", rep)
-    r, err := marshalling(rep)
     if err != nil {
         t.Errorf("Error Unmarshalling the answer: %q", err)
     }
-    t.Logf("Received answer: %s", r)
+    t.Logf("Received answer: %v", rep)
 }
