@@ -1,4 +1,4 @@
-# Run test for contract.
+# Run test for contract package.
 
 In order to run the test to test the [contract package](./) a local blockchain with [the test contract](./test/TestContract.sol) deploy on it should be available.
 

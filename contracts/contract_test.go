@@ -90,6 +90,11 @@ func TestContractCall(t *testing.T){
 //TODO should update the smart contract which should return a big array
 func TestBigAnswerOverIPC(t  *testing.T) {
 
+    abi, err = os.Open("./test/abi.json")
+    if err != nil {
+        t.Fatalf("Error opening abi file: %s", err) 
+    }
+
     IPCconn, err := rpc.ConnectEndpoint(*ipcPath)
     if err != nil {
         t.Fatalf("Error When connecting to IPC %s", err)
