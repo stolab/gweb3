@@ -105,7 +105,7 @@ func TestBigAnswerOverIPC(t  *testing.T) {
         t.Fatalf("Got an error when intializing the contract : %s ", err)
     }
 
-    result, err := mycontract.Function["getMessage"].Call()
+    result, err := mycontract.Function["getLongMessage"].Call()
     if err != nil {
         t.Fatalf("Got an error when calling getMessage : %s ", err)
     }
