@@ -37,7 +37,6 @@ type RPCTransaction struct {
     Id      int          `json:"id"` //not sure what this is used for, seems like it can be anything.
 }
 
-// NOTE does it really make sense to keep this Endpoint in this form?
 //Initialize the endpoint.
 func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
 
