@@ -15,6 +15,7 @@ type Endpoint struct {
     ParsedURL *url.URL
     endpoint string
     isIPC bool
+    requestId int
 }
 
 // Represent the transaction 
@@ -46,6 +47,7 @@ func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
         return &Endpoint{
             endpoint: Rawurl,
             isIPC: true,
+            requestId: 1,
         }, nil
     }
 
@@ -58,6 +60,7 @@ func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
         ParsedURL: u, 
         endpoint: u.String(),
         isIPC: false,
+        requestId: 1,
     }, nil
 }
 
