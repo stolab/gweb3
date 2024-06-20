@@ -155,3 +155,23 @@ func (ep *Endpoint) Call(tr Transaction) (*RPCResponse, error) {
     return ep.Request(params, RPCendpoint["Call"])
 }
 
+func (ep *Endpoint) DeployContract(sender string, contractByteCodePath string) (*RPCResponse, error){
+
+    contractContent, err := os.ReadFile(contractByteCodePath)
+    if err != nil {
+        return nil, err
+    }
+    contractPayload := fmt.Sprintf("0x%s", contractContent)
+    tr := BuildTransaction(sender, "0x0000000000000000000000000000000000000000", "0x0", contractPayload)
+    rep, err := ep.SendTransaction(tr)
+    if err != nil {
+        return nil, err
+    }
+
+    t, err := ep.GetTransactionReceipt(rep.Result)
+    if err != nil {
+        return nil, err
+    }
+    return t, nil
+
+}

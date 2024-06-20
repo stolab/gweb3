@@ -200,3 +200,16 @@ func TestIPC(t *testing.T){
     }
     t.Logf("Received an answer: %s", stringResult)
 }
+
+func TestDeployContract(t *testing.T){
+    rep, err := endpoint.DeployContract(*account, "./test/HelloWorld.bin")
+    if err != nil {
+        t.Fatalf("error when deploying contract: %q", err)
+    }
+    t.Logf("resp: %v", rep)
+    r, err := marshalling(rep)
+    if err != nil {
+        t.Errorf("Error Unmarshalling the answer: %q", err)
+    }
+    t.Logf("Received answer: %s", r)
+}

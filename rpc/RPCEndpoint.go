@@ -23,8 +23,8 @@ var RPCendpoint = map[string]RPCMethod {
     "SendRawTransaction": {"eth_sendRawTransaction", "POST"},
     "GasPrice": {"eth_gasPrice", "GET"},
     "Coinbase": {"eth_coinbase", "GET"},
-    "GetTransactionByHash": {"eth_getTransactionByHash", "GET"},
-    "GetBlockReceipts": {"eth_getBlockReceipts", "GET"},
+    "GetTransactionByHash": {"eth_getTransactionByHash", "POST"},
+    "GetBlockReceipts": {"eth_getBlockReceipts", "POST"},
     "GetTransactionReceipt": {"eth_getTransactionReceipt", "POST"},
     "Call": {"eth_call", "POST"},
 
