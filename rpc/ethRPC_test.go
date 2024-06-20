@@ -17,7 +17,7 @@ var (
 // flag available
 var (
     chainURL = flag.String("chainURL", "https://rpc2.sepolia.org", "the RPC endoint to use. (Default gnosis chain : https://rpc2.sepolia.org)")
-    ipcPath = flag.String("ipc", "", "the path to the IPC file. (default : \"\")")
+    ipcPath = flag.String("ipc", "/tmp/geth.ipc", "the path to the IPC file. (default : /tmp/geth.ipc)")
     transactionHash = flag.String("trHash", "0xe88c6ef5de26f616184690eac79846de1c531dba0f1407179c2ea87e62a29e6d", "The transaction hash to use for test. (Default : 0xe88c6ef5de26f616184690eac79846de1c531dba0f1407179c2ea87e62a29e6d)")
     account = flag.String("account", "0xA23c9035AfD3e34690d80804B33Bdf1b93c0A604", "The address to use for some check. (Default: 0xA23c9035AfD3e34690d80804B33Bdf1b93c0A604)")
     contractAddr = flag.String("contractAddr", "0xEd4Af1Ef4c47d25fC8f7D2Bae7Da3dDF9B34fB0B", "Address of the contract to use. (Default : 0xEd4Af1Ef4c47d25fC8f7D2Bae7Da3dDF9B34fB0B)")
@@ -181,6 +181,7 @@ func TestGetStorageAt(t *testing.T){
 	t.Logf(`Answer from the request : %s`, stringResult)
 }
 
+//Should run geth --dev to test it.
 func TestIPC(t *testing.T){
     e, err := ConnectEndpoint(*ipcPath)
     if err != nil {
