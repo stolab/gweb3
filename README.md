@@ -38,25 +38,27 @@ response, err := endpoint.ClientVersion() //Will return the clientVersion of the
 ```
 
 All the current RPC call implemented are described in the following table
-| ClientVersion | |
-| Sha3          | |
-| NetworkId     | |
-| MostRecentBlock | |
-| GetBalance    | |
-| GetStorageAt  | |
-| GetTransactionCount | |
-| GetCode       | |
-| GetBlockByHash | |
-| Sign          | |
-| SignTransaction | |
-| SendTransaction | |
-| SendRawTransaction | |
-| GasPrice | |
-| Coinbase | |
-| GetTransactionByHash | |
-| GetBlockReceipts | |
-| GetTransactionReceipt | |
-| Call | |
+| | |
+|-|-|
+| ClientVersion | v |
+| Sha3          | v |
+| NetworkId     | v |
+| MostRecentBlock | v |
+| GetBalance    | v |
+| GetStorageAt  | v |
+| GetTransactionCount | v |
+| GetCode       | v |
+| GetBlockByHash | v |
+| Sign          | v |
+| SignTransaction | v |
+| SendTransaction | v |
+| SendRawTransaction | v |
+| GasPrice | v |
+| Coinbase | v |
+| GetTransactionByHash | v |
+| GetBlockReceipts | v |
+| GetTransactionReceipt | v |
+| Call | v |
 
 ### Smart Contract Interaction
 You can also interact with smart contract. As shown in the example below, you will need the ABI of the contract in order to interact with it, as well as an endpoint.
