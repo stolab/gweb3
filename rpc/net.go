@@ -18,7 +18,7 @@ type RPCError struct {
 type RPCResponse struct {
     Jsonrpc string `json:"jsonrpc"`
     Id int `json:"id"`
-    Result string `json:"result"`
+    Result any `json:"result"`
     Error *RPCError `json:"error"`
 }
 
