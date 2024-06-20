@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -32,6 +33,7 @@ type Transaction struct {
 }
 
 // Represent the transaction to create a contract
+// When creating a contract, the TO field should be absent
 type ContractCreationTr struct {
     From  string `json:"from"`
     Value string `json:"value"`
@@ -50,6 +52,8 @@ type RPCTransaction struct {
     Id      int          `json:"id"` //not sure what this is used for, seems like it can be anything.
 }
 
+// TransactionReceiptResponse represent the Response when
+// querying the receipt of a transaction
 type TransactionReceiptResponse struct {
     BlockHash string `json:"blockHash"`
     BlockNumber string `json:"blockNumber"`
@@ -176,9 +180,31 @@ func (ep *Endpoint) GetBlockReceipts(blockNumber string) (*RPCResponse, error) {
     return ep.Request(params, RPCendpoint["GetBlockReceipts"])
 }
 
-func (ep *Endpoint) GetTransactionReceipt(transactionHash string) (*RPCResponse, error){
+// GetTransactionReceipt query the receipt of a transaction 
+// based on the hash of the transaction.
+// Upon successful completion, it return a pointer to a TransactionReceiptResponse struct
+// In case of failure, return nil and an appropriate error
+func (ep *Endpoint) GetTransactionReceipt(transactionHash string) (*TransactionReceiptResponse, error){
     params := []Parameters{transactionHash}
-    return ep.Request(params, RPCendpoint["GetTransactionReceipt"])
+    response, err := ep.Request(params, RPCendpoint["GetTransactionReceipt"])
+    if err != nil {
+        return nil, err
+    }
+
+    if response.Error != nil {
+        return nil, fmt.Errorf("Error in the request: %s", response.Error.Message)
+    }
+
+    resultMap, ok := response.Result.(map[string]any); if !ok {
+        return nil, fmt.Errorf("Answer is not a map : %s", response.Result)
+    }
+    receipt := new(TransactionReceiptResponse)
+    jsonData, err := json.Marshal(resultMap)
+    if err != nil {
+        return nil, fmt.Errorf("Error When decrypting receipt:%s. Error: %s",resultMap, err)
+    }
+    json.Unmarshal(jsonData, receipt)
+    return receipt, nil
 }
 
 func (ep *Endpoint) Call(tr Transaction) (*RPCResponse, error) {
@@ -186,7 +212,13 @@ func (ep *Endpoint) Call(tr Transaction) (*RPCResponse, error) {
     return ep.Request(params, RPCendpoint["Call"])
 }
 
-func (ep *Endpoint) DeployContract(sender string, contractByteCodePath string) (*RPCResponse, error){
+// DeployContract deploy a contract to the blockchain
+// it takes the account which is deploying the contract as first argument
+// The second argument is the path to the compiled contract
+// it return a TransactionReceipt struct (which contain the contract address) upon successfull
+// completion
+// if an error occur, return nil and an error
+func (ep *Endpoint) DeployContract(sender string, contractByteCodePath string) (*TransactionReceiptResponse, error){
 
     contractContent, err := os.ReadFile(contractByteCodePath)
     if err != nil {
@@ -204,22 +236,20 @@ func (ep *Endpoint) DeployContract(sender string, contractByteCodePath string) (
     if err != nil {
         return nil, err
     }
+    if r.Error != nil {
+        return nil, fmt.Errorf("Error in the Transaction: %s", r.Error.Message)
+    }
 
     //type assertion needed
     result, ok := r.Result.(string); if !ok{
         return nil, fmt.Errorf("Transaction hash is not a string: %v", r)
     }
-    fmt.Println(result)
 
-    time.Sleep(50 * time.Millisecond) //otherwise it goes too fast
+    time.Sleep(5 * time.Millisecond) //otherwise it goes too fast
 
-    t, err := ep.GetTransactionReceipt(result)
+    trReceipt, err := ep.GetTransactionReceipt(result)
     if err != nil {
         return nil, err
     }
-
-    fmt.Println(t.Result)
-
-    return t, nil
-
+    return trReceipt, nil
 }

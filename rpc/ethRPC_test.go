@@ -152,16 +152,7 @@ func TestGetTransactionReceipt(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error when getting the receipt %s", err)
 	}
-
-    if r.Error != nil {
-        t.Fatalf(`Got an error in the rpc answer : %q`, r.Error)
-    }
-
-    stringResult, err := marshalling(r)
-    if err != nil {
-        t.Fatalf("Got an error from unmarshalling: %q", err)
-    }
-	t.Logf(`Answer from the request : %s`, stringResult)
+	t.Logf(`Answer from the request : %v`, r)
 }
 
 func TestGetStorageAt(t *testing.T){
@@ -207,8 +198,5 @@ func TestDeployContract(t *testing.T){
     if err != nil {
         t.Fatalf("error when deploying contract: %q", err)
     }
-    if err != nil {
-        t.Errorf("Error Unmarshalling the answer: %q", err)
-    }
-    t.Logf("Received answer: %v", rep)
+    t.Logf("Contract address: %s", rep.ContractAddress)
 }
