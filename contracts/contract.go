@@ -56,7 +56,10 @@ func (cf ContractFunction) Call(arguments ...interface{}) ([]interface{}, error)
         return nil, fmt.Errorf("code: %d, message : %s", resp.Error.Code, resp.Error.Message)
     }
     
-    hexResult, err := hex.DecodeString(resp.Result[2:])
+    returnValue, ok := resp.Result.(string); if !ok {
+        return nil, fmt.Errorf("Return value error. Expected string got: %v", resp.Result)
+    }
+    hexResult, err := hex.DecodeString(returnValue[2:])
     if err != nil {
         return nil, err
     }
