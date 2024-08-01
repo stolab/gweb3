@@ -134,8 +134,18 @@ func BuildTransaction(from string, to string, value string, input string) Transa
     return transaction
 }
 
-func (ep *Endpoint) SendTransaction(transaction interface{}) (*RPCResponse, error) { //must be used with getTransactionReceipt to get the contract address after creating it.
+func (ep *Endpoint) SendTransaction(transaction interface{}) (*RPCResponse, error) { 
         return ep.Request([]Parameters{transaction}, RPCendpoint["SendTransaction"])
+}
+
+// wrapper around sendTransaction to facilitate the sending
+// of token
+// the two arguments are value, the amount in wei to send
+// from the sender of the amount
+// to the address to send the amount to
+func (ep *Endpoint) SendToken(amount string, from string,  to string) (*RPCResponse, error){
+    tr := BuildTransaction(from, to, amount, "") 
+    return ep.SendTransaction(tr)
 }
 
 func (ep *Endpoint) GetTransactionByHash(transactionHash string) (*RPCResponse, error) {
@@ -145,7 +155,6 @@ func (ep *Endpoint) GetTransactionByHash(transactionHash string) (*RPCResponse, 
 
 func (ep *Endpoint) GetBalance(address string) (*RPCResponse, error) {
     params := []Parameters{address, "latest"} 
-
     return ep.Request(params, RPCendpoint["GetBalance"])
 }
 
@@ -154,7 +163,6 @@ func (ep *Endpoint) GetStorageAt(contractAdress string, storageAddr int) (*RPCRe
 
     params := []Parameters{contractAdress, storageAddrString, "latest"}
     return ep.Request(params, RPCendpoint["GetStorageAt"])
-
 }
 
 func (ep *Endpoint) Sha3(data string) (*RPCResponse, error) {
@@ -178,6 +186,41 @@ func (ep *Endpoint) GetCoinbase() (*RPCResponse, error) {
 func (ep *Endpoint) GetBlockReceipts(blockNumber string) (*RPCResponse, error) {
     params := []Parameters{blockNumber}
     return ep.Request(params, RPCendpoint["GetBlockReceipts"])
+}
+
+func (ep *Endpoint) GetAccounts() (*RPCResponse, error) {
+    return ep.Request([]Parameters{}, RPCendpoint["Accounts"])
+}
+
+func (ep *Endpoint) EstimateGas(tr Transaction) (*RPCResponse, error) {
+    params := []Parameters{tr, "latest"}
+    return ep.Request(params, RPCendpoint["EstimateGas"])
+}
+
+func (ep *Endpoint) GetBlockTransactionCountByNumber(blockNumber string) (*RPCResponse, error) {
+    params := []Parameters{blockNumber}
+    return ep.Request(params, RPCendpoint["GetBlockTransactionCountByNumber"])
+}
+
+func (ep *Endpoint) GetBlockByNumber(blockNumber string) (*RPCResponse, error) {
+    params := []Parameters{blockNumber}
+    return ep.Request(params, RPCendpoint["GetBlockByNumber"])
+}
+
+func (ep *Endpoint) GetProof(address string, storageKey []string, blockNumber string) (*RPCResponse, error) {
+    params := []Parameters{address, storageKey, blockNumber}
+    return ep.Request(params, RPCendpoint["GetProof"])
+}
+
+//APPAREMENT C EST PAS REQUIRE LE BLOCKHASH ??
+func (ep *Endpoint) GetBlockTransactionCountByHash(blockHash string) (*RPCResponse, error) {
+    params := []Parameters{blockHash}
+    return ep.Request(params, RPCendpoint["GetBlockTransactionCountByHash"])
+}
+
+func (ep *Endpoint) FeeHistory(blockCount string, newestBlock string, rewardPercentile []float32) (*RPCResponse, error) {
+    params := []Parameters{blockCount, newestBlock, rewardPercentile}
+    return ep.Request(params, RPCendpoint["FeeHistory"])
 }
 
 // GetTransactionReceipt query the receipt of a transaction 
