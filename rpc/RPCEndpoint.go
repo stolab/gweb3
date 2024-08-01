@@ -27,14 +27,11 @@ var RPCendpoint = map[string]RPCMethod {
     "GetBlockReceipts": {"eth_getBlockReceipts", "POST"},
     "GetTransactionReceipt": {"eth_getTransactionReceipt", "POST"},
     "Call": {"eth_call", "POST"},
-
-    //TODO Still need to be implemented
     "Account" : {"eth_accounts", "GET"},
     "EstimateGas": {"eth_estimateGas", "GET"},
-    "FeeHistory": {"eth_feeHistory", "GET"},
-    "GetBlockByNumber": {"eth_getBlockByNumber", "GET"},
-    "GetBlockTransactionCountByHash": {"eth_getBlockTransactionCountByhash", "GET"},
     "GetBlockTransactionCountByNumber": {"eth_getBlockTransactionCountByNumber", "GET"},
+    "GetBlockByNumber": {"eth_getBlockByNumber", "GET"},
     "GetProof": {"eth_getProof", "GET"},
-
+    "GetBlockTransactionCountByHash": {"eth_getBlockTransactionCountByHash", "GET"},
+    "FeeHistory": {"eth_feeHistory", "GET"},
 }
