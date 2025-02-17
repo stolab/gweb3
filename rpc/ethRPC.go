@@ -96,6 +96,16 @@ func ConnectEndpoint(Rawurl string) (*Endpoint, error) {
     }, nil
 }
 
+//return by default the IPC endpoint 
+// created when running geth locally
+func ConnectLocalEndpoint() (*Endpoint, error) {
+    return &Endpoint{
+        endpoint: "/tmp/geth.ipc",
+        isIPC: true,
+        requestId: 1,
+    }, nil
+}
+
 func (ep *Endpoint) ClientVersion() (*RPCResponse, error) {
     return ep.Request([]Parameters{}, RPCendpoint["ClientVersion"])
 }
