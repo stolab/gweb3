@@ -28,6 +28,15 @@ type Contract struct {
     From string         // sender of the transaction
 }
 
+func (cf ContractFunction) BuildTransaction(arguments ...interface{}) (*rpc.Transaction, error) {
+    encInput, err := cf.contract.Abi.Pack(cf.Name, arguments...)
+    if err != nil {
+        return nil, fmt.Errorf("Got an error during the ABI encoding: %s", err)
+    }
+    transaction := rpc.BuildTransaction(cf.contract.From, cf.contract.contractAddr, "0x0", fmt.Sprintf("0x%x", encInput))
+    return &transaction, nil
+}
+
 //Call can only be used on a ContractFunction struct.
 //It will simply called the ContractFunction cf with the 
 //undefined number of argument the user will give to it.

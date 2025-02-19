@@ -39,6 +39,7 @@ func TestMain(m *testing.M){
     flag.Parse()
 
     endpoint, err =  ConnectEndpoint(*chainURL)
+
     if err != nil {
         fmt.Println("Error when connecting to the endpoint: %w", err)
         os.Exit(1) 
