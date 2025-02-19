@@ -28,7 +28,8 @@ type Contract struct {
     From string         // sender of the transaction
 }
 
-func (cf ContractFunction) BuildTransaction(arguments ...interface{}) (*rpc.Transaction, error) {
+func (c Contract) BuildTransaction(function string, arguments ...interface{}) (*rpc.Transaction, error) {
+    cf := c.Function[function] 
     encInput, err := cf.contract.Abi.Pack(cf.Name, arguments...)
     if err != nil {
         return nil, fmt.Errorf("Got an error during the ABI encoding: %s", err)
